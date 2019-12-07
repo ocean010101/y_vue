@@ -7,9 +7,18 @@ class YVue {
 
     this.observer(this.$data);
 
-    //测试代码
-    new Watcher(this, 'test'); //把当前实例的test属性添加到Watcher
-    this.test; //激活getter函数
+    // //测试代码
+    // new Watcher(this, 'test'); //把当前实例的test属性添加到Watcher
+    // this.test; //激活getter函数
+
+    //创建编译器
+    new Compile(options.el, this);
+
+    if (options.created) {
+      options.created.call(this);
+    }
+
+
   }
   //使传递进来的数据响应化
   observer(value) {
@@ -43,6 +52,7 @@ class YVue {
     Object.defineProperty(obj, key, {
       get: function () {
         //将Dep.target 指向Watcher 实例加入到Dep中
+        // Dep.target 就是新创建的Watcher
         Dep.target && dep.addDep(Dep.target);
         return val;
       },
@@ -75,15 +85,23 @@ class Dep {
 
 //保存UI中的依赖， 实现update 函数可以更新之
 class Watcher {
-  constructor(vm, key) {
+  constructor(vm, key, cb) {
     this.vm = vm;
     this.key = key;
+    this.cb = cb;
 
     //将当前实例指向Dep.target
     Dep.target = this;
 
+    //触发当前属性
+    this.vm[this.key]; //读一次key， 触发getter
+    Dep.target = null;
   }
   update() {
-    console.log(`${this.key} 属性更新了`);
+    //绑定当前vue实例
+    this.cb.call(this.vm, this.vm[this.key])
+    //console.log(`${this.key} 属性更新了`);
   }
+
+
 }

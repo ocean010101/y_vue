@@ -9,8 +9,44 @@
 </head>
 
 <body>
+  <div id="app">
+    <p>{{name}}</p>
+    <p y-text="name"></p>
+    <p>{{age}}</p>
+    <p>
+      {{doubleAge}}
+    </p>
+    <input type="text" y-model="name">
+    <button @click="changeName">呵呵</button>
+    <div y-html="html"></div>
+  </div>
+  <script src='./compile.js'></script>
   <script src='./yvue.js'></script>
+
+
   <script>
+    const kaikeba = new YVue({
+      el: '#app',
+      data: {
+        name: "I am test.",
+        age: 12,
+        html: '<button>这是一个按钮</button>'
+      },
+      created() {
+        console.log('开始啦')
+        setTimeout(() => {
+          this.name = '我是测试'
+        }, 1500)
+      },
+      methods: {
+        changeName() {
+          this.name = '哈喽，开课吧'
+          this.age = 1
+        }
+      }
+    })
+  </script>
+  <!-- <script>
     const app = new YVue({
       data: {
         test: "I am test",
@@ -27,7 +63,7 @@
     // app.bar = 'bar'
     // app.$set();
     // app.$delete();
-  </script>
+  </script> -->
 </body>
 
 </html>
